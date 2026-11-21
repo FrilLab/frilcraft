@@ -155,6 +155,12 @@ After changing Registry source files, run `npm run registry:sync` and then `npm 
 
 React 19 is the component interface; Tailwind CSS v4 and `cn` provide DOM styling and class composition. Stage/View contracts remain type-only boundaries for future GPU components. React Three Fiber is the preferred future React integration for a real 3D component, with Drei as an optional helper library; no GPU runtime is installed or implemented. See [Rendering Foundations](docs/architecture/rendering-foundations.md).
 
+## Proposed Experience Library Direction
+
+For the long-term vision, read the [Experience Library Plan](docs/architecture/experience-library-plan.md). It explains in plain terms how FrilCraft can reuse the five demos, extract editing concepts from `demo-test`, keep FrilStudio as a separate product, and deliver one complete feature at a time.
+
+The plan **proposes** a shared Vanilla Three.js runtime with a thin React adapter for future 3D experiences, with optional Rust/WASM for measured computational needs. It does **not** describe a shipped runtime or change the current contributor rules; the existing R3F guidance remains in place pending architecture review.
+
 ## License
 
 FrilCraft is licensed under the [MIT License](LICENSE). Copyright (c) 2026 FrilLab. Copies and substantial portions must retain the copyright and permission notice.
