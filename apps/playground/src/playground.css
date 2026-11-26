@@ -2,6 +2,7 @@
 
 @source "./";
 @source "../../../packages/interactive/src/components/envelope-reveal";
+@source "../../../packages/interactive/src/components/wedding-journey";
 
 :root {
   --background: #f7f6f2;

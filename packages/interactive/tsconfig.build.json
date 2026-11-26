@@ -9,7 +9,9 @@
   },
   "include": [
     "src/components/envelope-reveal/index.ts",
-    "src/components/envelope-reveal/EnvelopeReveal.tsx"
+    "src/components/envelope-reveal/EnvelopeReveal.tsx",
+    "src/components/wedding-journey/index.ts",
+    "src/components/wedding-journey/WeddingJourney.tsx"
   ],
   "exclude": [
     "**/*.test.ts",

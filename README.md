@@ -2,7 +2,7 @@
 
 **Craft interactive experiences for the web.**
 
-FrilCraft is an early prototype for reusable React 19 components authored in TypeScript and Tailwind CSS v4. Envelope Reveal is the first complete workflow: a reusable component, a Vite Playground preview, editable properties, generated usage examples, and individual source-file copying. The `@frillab/interactive` package is private and unpublished. For projects outside this workspace, use the copied-source workflow.
+FrilCraft is an early prototype for reusable React 19 components authored in TypeScript and Tailwind CSS v4. Envelope Reveal and Wedding Journey each have a reusable component, Vite Playground preview, editable properties, generated usage examples, and individual source-file copying. The `@frillab/interactive` package is private and unpublished. For projects outside this workspace, use the copied-source workflow or FrilAdd Registry.
 
 ## Repository structure
 
@@ -46,6 +46,7 @@ The Playground has two entry points:
 
 - `/` lists **all registered components** as static preview cards and supports shareable search and filters.
 - `/components/envelope-reveal` opens Envelope Reveal's interactive detail view directly.
+- `/components/wedding-journey` opens the illustrated garden invitation with touch and keyboard movement and a skip link.
 
 Adding metadata and a lazy detail entry adds the card and URL. The gallery uses static preview artwork rather than running every component. See [Project Map](docs/architecture/project-map.md) and [Adding components](docs/adding-components.md).
 
@@ -142,6 +143,19 @@ export function Invitation() {
 The copied component requires React 19, `cn`, and Tailwind CSS v4 in the consumer's build. Keep the included MIT license notice with copies and redistributions. FrilAdd does not automatically upgrade previously installed copies; replacing an older installation may require moving or removing its existing files before adding the current source. The Playground also shows **Workspace Usage** for examples inside this repository; those imports rely on the private package and are not an external installation path. **Source Files** remain available for inspection and manual copying.
 
 See [FrilAdd installation options](docs/friladd-integration.md) for project-local registration, the one-time explicit URL command, existing-file behavior, and reproducible Registry URLs. The [Registry Manifest](registry.json) follows FrilAdd's generic v1 format; FrilAdd has no FrilCraft-specific logic. See [Envelope Reveal](docs/components/envelope-reveal.md) for the API and [Adding components](docs/adding-components.md) for the contributor workflow.
+
+## Use Wedding Journey outside this workspace
+
+The private `@frillab/interactive` package is not published to npm. In the Playground, open Wedding Journey's **Source Files** tab to inspect and copy its component, stylesheet, embedded artwork, and MIT license into `src/components/wedding-journey/`. The files include the illustration data as a TypeScript module, so the copied component does not depend on FrilCraft-hosted image URLs.
+
+Register FrilCraft once for a global setup, then install Wedding Journey from a React project directory:
+
+```bash
+npx --yes friladd@latest registry add frilcraft https://raw.githubusercontent.com/FrilLab/frilcraft/main/registry.json --global --default
+npx --yes friladd@latest add wedding-journey
+```
+
+Install React 19 and Tailwind CSS v4 with the Vite plugin. Add `@source "./components/wedding-journey";` beside `@import "tailwindcss";` in the app CSS, import `wedding-journey.css` once, and follow the source usage example shown in the Playground. The template supports Korean and English copy, touch and keyboard movement, a skip-to-invitation link, and reduced-motion settings. See [Wedding Journey](docs/components/wedding-journey.md) for its component API and setup details.
 
 The independent distribution flow is:
 

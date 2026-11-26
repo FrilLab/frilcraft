@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { ComponentDetail } from "./ComponentDetail.js";
 import type { ComponentCatalogEntry, ComponentDetailRegistration } from "./catalog/index.js";
@@ -9,6 +10,7 @@ function makeDetail(label: string): ComponentDetailRegistration {
     controls: [],
     previewFeatures: [],
     sourceFiles: [],
+    sourceFileCount: 0,
     sourceInstructions: "",
     render: () => <span>{label} preview</span>,
     generateUsageCode: () => "",
@@ -76,5 +78,20 @@ describe("lazy component detail", () => {
     await act(async () => firstRequest.resolve(makeDetail("First")));
     expect(screen.queryByText("First preview")).not.toBeInTheDocument();
     expect(screen.getByText("Second preview")).toBeInTheDocument();
+  });
+
+  it("loads large source files only after selecting the source tab", async () => {
+    const user = userEvent.setup();
+    const loadSourceFiles = vi.fn().mockResolvedValue([{ path: "Example.tsx", content: "export const example = true;" }]);
+    const detail = { ...makeDetail("Lazy source"), loadSourceFiles, sourceFileCount: 1 };
+    const entry = makeEntry("lazy", "Lazy", async () => detail);
+    render(<ComponentDetail selectedComponent={entry} />);
+
+    expect(await screen.findByText("Lazy source preview")).toBeInTheDocument();
+    expect(loadSourceFiles).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("tab", { name: "Source Files" }));
+    expect(loadSourceFiles).toHaveBeenCalledTimes(1);
+    expect(await screen.findByText("export const example = true;")).toBeInTheDocument();
+    expect(loadSourceFiles).toHaveBeenCalledTimes(1);
   });
 });

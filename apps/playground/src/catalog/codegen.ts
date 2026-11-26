@@ -25,12 +25,16 @@ export function createUsageCode<Props extends { [Key in keyof Props]: Playground
     return [`      ${String(key)}=${serializeJsxValue(value)}`];
   });
 
-  const component = changedProps.length === 0
+  const additionalProps = definition.additionalProps?.map(({ name, value }) => `      ${name}={${value}}`) ?? [];
+  const allProps = [...changedProps, ...additionalProps];
+
+  const component = allProps.length === 0
     ? `    <${definition.componentName} />`
-    : [`    <${definition.componentName}`, ...changedProps, "    />"].join("\n");
+    : [`    <${definition.componentName}`, ...allProps, "    />"].join("\n");
   const imports = [
     `import { ${definition.componentName} } from ${serializeString(definition.importPath)};`,
     ...(definition.cssImportPath ? [`import ${serializeString(definition.cssImportPath)};`] : []),
+    ...(definition.additionalImports ?? []),
   ];
 
   return [
@@ -54,6 +58,8 @@ export function registerComponent<Props extends { [Key in keyof Props]: Playgrou
     previewHint: definition.previewHint,
     previewFeatures: definition.previewFeatures ?? [],
     sourceFiles: definition.sourceFiles,
+    loadSourceFiles: definition.loadSourceFiles,
+    sourceFileCount: definition.sourceFileCount ?? definition.sourceFiles.length,
     sourceInstructions: definition.sourceInstructions,
     render: (props) => createElement(definition.Preview, props as Props),
     generateUsageCode: (props, target) => createUsageCode({
@@ -65,6 +71,8 @@ export function registerComponent<Props extends { [Key in keyof Props]: Playgrou
       usageNote: target === "workspace"
         ? "Workspace usage only: @frillab/interactive is private and unpublished."
         : "Copied source usage: place the component files at the paths shown in the source instructions.",
+      additionalImports: target === "source" ? definition.sourceUsageImports : undefined,
+      additionalProps: target === "source" ? definition.sourceUsageProps : undefined,
     }, props as typeof definition.defaultProps),
   };
 }

@@ -9,8 +9,10 @@ import { build } from "vite";
 
 const repositoryRoot = fileURLToPath(new URL("../../../", import.meta.url));
 const componentSourceDirectory = join(repositoryRoot, "packages/interactive/src/components/envelope-reveal");
+const weddingJourneySourceDirectory = join(repositoryRoot, "packages/interactive/src/components/wedding-journey");
 const isolatedApplication = await mkdtemp(join(repositoryRoot, "tests/consumers/source-vite/.consumer-"));
 const copiedFiles = ["EnvelopeReveal.tsx", "index.ts"];
+const weddingJourneyFiles = ["WeddingJourney.tsx", "index.ts", "wedding-journey.css", "WeddingJourneyArtwork.ts"];
 
 try {
   const componentDirectory = join(isolatedApplication, "src/components/envelope-reveal");
@@ -19,7 +21,14 @@ try {
     join(componentSourceDirectory, name),
     join(componentDirectory, name),
   )));
+  const weddingJourneyDirectory = join(isolatedApplication, "src/components/wedding-journey");
+  await mkdir(weddingJourneyDirectory, { recursive: true });
+  await Promise.all(weddingJourneyFiles.map((name) => copyFile(
+    join(weddingJourneySourceDirectory, name),
+    join(weddingJourneyDirectory, name),
+  )));
   await copyFile(join(repositoryRoot, "LICENSE"), join(isolatedApplication, "LICENSE"));
+  await copyFile(join(repositoryRoot, "LICENSE"), join(weddingJourneyDirectory, "LICENSE"));
   await writeFile(join(isolatedApplication, "package.json"), JSON.stringify({
     name: "frilcraft-source-consumer-validation",
     private: true,
@@ -47,15 +56,19 @@ try {
   await mkdir(join(isolatedApplication, "src"), { recursive: true });
   await writeFile(join(isolatedApplication, "src/main.tsx"), `import { createRoot } from "react-dom/client";
 import { EnvelopeReveal } from "./components/envelope-reveal/index";
+import "./components/wedding-journey/wedding-journey.css";
+import { WeddingJourney } from "./components/wedding-journey/index";
+import { weddingJourneyArtwork } from "./components/wedding-journey/WeddingJourneyArtwork";
 import "./consumer.css";
 
 const root = document.getElementById("root");
 if (!root) throw new Error("Consumer root was not found.");
-createRoot(root).render(<EnvelopeReveal title="Source consumer validation" />);
+createRoot(root).render(<><EnvelopeReveal title="Source consumer validation" /><WeddingJourney names="Copied source validation" locale="en" artwork={weddingJourneyArtwork} /></>);
 `);
   await writeFile(join(isolatedApplication, "src/consumer.css"), `@import "tailwindcss";
 
 @source "./components/envelope-reveal";
+@source "./components/wedding-journey";
 `);
 
   const tsconfigPath = join(isolatedApplication, "tsconfig.json");
@@ -92,13 +105,17 @@ createRoot(root).render(<EnvelopeReveal title="Source consumer validation" />);
   const css = (await Promise.all(cssFiles.map((name) => readFile(join(assetsDirectory, name), "utf8")))).join("\n");
   assert.match(javascript, /Source consumer validation/, "Copied component should be included in the app bundle.");
   assert.match(javascript, /fc-envelope|envelopeColor/, "Copied component implementation should be included in the app bundle.");
+  assert.match(javascript, /fc-wedding-journey|WeddingJourney/, "Copied Wedding Journey implementation should be included in the app bundle.");
+  assert.match(javascript, /data:image\/webp;base64/, "Copied Wedding Journey artwork should be embedded in the local artwork module.");
   assert.doesNotMatch(javascript, /@frillab\/interactive/, "Source consumer must not import the workspace package.");
   assert.doesNotMatch(javascript, /(?:from\s*|import\s*\()\s*["'](?:three(?:\.js)?|@react-three\/(?:fiber|drei))["']/i, "DOM component bundle must not import a 3D runtime.");
   assert.match(css, /perspective:\s*850px/, "Copied-source Tailwind CSS should contain the component perspective utility.");
   assert.match(css, /clip-path:\s*polygon/, "Copied-source Tailwind CSS should contain envelope geometry utilities.");
   assert.match(css, /prefers-reduced-motion/, "Copied-source Tailwind CSS should honor reduced-motion utilities.");
+  assert.match(css, /\.fc-wedding-journey/, "Copied-source build should include the Wedding Journey stylesheet.");
   assert.deepEqual(await readdir(componentDirectory), [...copiedFiles].sort(), "The consumer should not require a component stylesheet.");
-  console.log("Source consumer passed: copied TSX typechecks and builds with Tailwind styles, React, and cn without the workspace package.");
+  assert.deepEqual(await readdir(weddingJourneyDirectory), [...weddingJourneyFiles, "LICENSE"].sort(), "The Wedding Journey consumer should receive its source, artwork, stylesheet, and license files.");
+  console.log("Source consumer passed: copied Envelope Reveal and Wedding Journey files typecheck and build without the workspace package.");
 } finally {
   await rm(isolatedApplication, { recursive: true, force: true });
 }

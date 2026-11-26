@@ -56,4 +56,16 @@ assert.ok(detailCode.includes("--fc-envelope-color"), "The lazy detail chunk mus
 assert.ok(detailCode.includes("export interface EnvelopeRevealProps"), "The lazy detail chunk must include source text for the source-files panel");
 assert.ok(!html.includes("envelope-reveal"), "Component-specific assets must not be linked by the initial HTML");
 
-console.log(`Playground bundle boundaries verified: ${initialScripts.length} initial script(s), Tailwind styles in the shared stylesheet, detail code and raw source in ${detailEntry[1].file}.`);
+const weddingDetailEntry = dynamicDetails.find(([key]) => key.endsWith("/catalog/entries/wedding-journey.tsx"));
+assert.ok(weddingDetailEntry, "Wedding Journey must be emitted as a dynamic detail entry");
+const weddingDetailCode = await readFile(join(dist, weddingDetailEntry[1].file), "utf8");
+assert.ok(weddingDetailCode.includes("fc-wedding-journey"), "The lazy Wedding Journey detail chunk must include the component implementation");
+assert.ok(!weddingDetailCode.includes("data:image/webp;base64"), "Large embedded artwork must stay out of the preview detail chunk");
+const weddingSourceEntry = manifest["src/catalog/entries/wedding-journey-source.ts"];
+assert.ok(weddingSourceEntry?.isDynamicEntry, "Wedding Journey source copy must be loaded by a separate dynamic import");
+const weddingSourceCode = await readFile(join(dist, weddingSourceEntry.file), "utf8");
+assert.ok(weddingSourceCode.includes("data:image/webp;base64"), "The deferred source chunk must contain the embedded local artwork");
+assert.ok(weddingSourceCode.length > 2_000_000, "The full artwork source should remain isolated from the preview bundle");
+assert.ok(!initialCode.includes("data:image/webp;base64"), "Embedded artwork must not ship with the initial Gallery bundle");
+
+console.log(`Playground bundle boundaries verified: ${initialScripts.length} initial script(s), Wedding Journey preview in ${weddingDetailEntry[1].file}, and embedded artwork deferred to ${weddingSourceEntry.file}.`);
