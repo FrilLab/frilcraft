@@ -22,6 +22,37 @@
           "sha256": "6162a73d4f3fbf575202118e89e1bfa4dda02c80274967ec76da45b4431ee752"
         }
       ]
+    },
+    {
+      "name": "wedding-journey",
+      "description": "A layered illustrated wedding invitation journey built with React and CSS.",
+      "files": [
+        {
+          "source": "packages/interactive/src/components/wedding-journey/WeddingJourney.tsx",
+          "target": "src/components/wedding-journey/WeddingJourney.tsx",
+          "sha256": "defc648e86be7186fd5b5d92e8911d6ca4a6611f48aad10f7b515d4781ac17a8"
+        },
+        {
+          "source": "packages/interactive/src/components/wedding-journey/index.ts",
+          "target": "src/components/wedding-journey/index.ts",
+          "sha256": "869b05b900ddb3664d3588ca6352dc865db146d564621900c6382fbd7939af03"
+        },
+        {
+          "source": "packages/interactive/src/components/wedding-journey/wedding-journey.css",
+          "target": "src/components/wedding-journey/wedding-journey.css",
+          "sha256": "1ccdaa0e663644ee9c18a0933695672bf7af9e71c73f07a8466992070f6a3b79"
+        },
+        {
+          "source": "packages/interactive/src/components/wedding-journey/WeddingJourneyArtwork.ts",
+          "target": "src/components/wedding-journey/WeddingJourneyArtwork.ts",
+          "sha256": "bb7a9a070513d590174fb4a7da75658acc086b80a24f62dc37698c6ab478a996"
+        },
+        {
+          "source": "LICENSE",
+          "target": "src/components/wedding-journey/LICENSE",
+          "sha256": "6162a73d4f3fbf575202118e89e1bfa4dda02c80274967ec76da45b4431ee752"
+        }
+      ]
     }
   ]
 }

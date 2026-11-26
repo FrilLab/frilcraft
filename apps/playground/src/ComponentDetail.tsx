@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,11 @@ import {
 
 type CodeView = "copied-source-usage" | "workspace-usage" | "source-files";
 type InstallCopyKey = "registration" | "install" | "qualified";
+type SourceFilesState =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "loaded"; files: ComponentDetailRegistration["sourceFiles"] }
+  | { status: "error" };
 const registrationCommand = createFrilAddRegistrationCommand();
 
 /** Load a detail registration only after its route is selected. */
@@ -67,6 +72,34 @@ function ComponentDetailEditor({
   const [codeView, setCodeView] = useState<CodeView>("copied-source-usage");
   const [copyStatus, setCopyStatus] = useState("");
   const [installCopyStatus, setInstallCopyStatus] = useState<Partial<Record<InstallCopyKey, string>>>({});
+  const [sourceFilesState, setSourceFilesState] = useState<SourceFilesState>({ status: "idle" });
+  const [sourceLoadAttempt, setSourceLoadAttempt] = useState(0);
+  const sourceFilesStatus = useRef<SourceFilesState["status"]>("idle");
+
+  useEffect(() => {
+    if (codeView !== "source-files" || !detail.loadSourceFiles || sourceFilesStatus.current !== "idle") return;
+    let active = true;
+    sourceFilesStatus.current = "loading";
+    setSourceFilesState({ status: "loading" });
+    detail.loadSourceFiles().then(
+      (files) => {
+        if (active) {
+          sourceFilesStatus.current = "loaded";
+          setSourceFilesState({ status: "loaded", files });
+        }
+      },
+      () => {
+        if (active) {
+          sourceFilesStatus.current = "error";
+          setSourceFilesState({ status: "error" });
+        }
+      },
+    );
+    return () => {
+      active = false;
+      if (sourceFilesStatus.current === "loading") sourceFilesStatus.current = "idle";
+    };
+  }, [codeView, detail, sourceLoadAttempt]);
 
   const usageCode = useMemo(
     () => detail.generateUsageCode(values, codeView === "workspace-usage" ? "workspace" : "source"),
@@ -121,11 +154,20 @@ function ComponentDetailEditor({
     setCopyStatus("");
   };
 
+  const sourceFiles = sourceFilesState.status === "loaded" ? sourceFilesState.files : detail.sourceFiles;
   const sourceFilesPanel = (
     <div className="p-5 sm:p-7">
       <p className="mb-5 max-w-4xl text-xs leading-6 text-muted-foreground">{detail.sourceInstructions}</p>
+      {sourceFilesState.status === "loading" && <p className="text-xs text-muted-foreground" role="status">Loading source files…</p>}
+      {sourceFilesState.status === "error" && (
+        <div className="flex flex-wrap items-center gap-3 text-xs" role="alert">
+          <span>Could not load the source files.</span>
+          <Button variant="link" size="sm" onClick={() => { sourceFilesStatus.current = "idle"; setSourceFilesState({ status: "idle" }); setSourceLoadAttempt((value) => value + 1); }}>Try again</Button>
+        </div>
+      )}
+      {(sourceFilesState.status === "loaded" || !detail.loadSourceFiles) && (
       <div className="grid gap-4">
-        {detail.sourceFiles.map((file) => (
+        {sourceFiles.map((file) => (
           <section className="min-w-0 border border-rule" key={file.path} aria-label={`Source file ${file.path}`}>
             <div className="flex items-center justify-between gap-3 border-b border-rule px-4 py-3">
               <strong className="truncate font-mono text-[11px] font-normal">{file.path}</strong>
@@ -135,6 +177,7 @@ function ComponentDetailEditor({
           </section>
         ))}
       </div>
+      )}
     </div>
   );
 
@@ -306,7 +349,7 @@ function ComponentDetailEditor({
               <TabsTrigger value="workspace-usage">Workspace Usage</TabsTrigger>
               <TabsTrigger value="source-files">Source Files</TabsTrigger>
             </TabsList>
-            <span className="text-[9px] uppercase tracking-[.13em] text-muted-foreground">{isUsageView ? "TSX" : `${detail.sourceFiles.length} files`}</span>
+            <span className="text-[9px] uppercase tracking-[.13em] text-muted-foreground">{isUsageView ? "TSX" : `${detail.sourceFileCount} files`}</span>
           </div>
           <TabsContent value="copied-source-usage">
             <pre className="max-h-[440px] overflow-auto bg-[#f0eee8] p-5 font-mono text-[11px] leading-6 text-ink sm:p-7"><code>{usageCode}</code></pre>

@@ -6,7 +6,8 @@
   "description": "Private React interactive component prototypes for FrilCraft",
   "files": [
     "dist",
-    "src/components/envelope-reveal"
+    "src/components/envelope-reveal",
+    "src/components/wedding-journey"
   ],
   "exports": {
     "./envelope-reveal": {
@@ -14,6 +15,17 @@
       "types": "./dist/types/components/envelope-reveal/index.d.ts",
       "import": "./dist/envelope-reveal.js",
       "default": "./dist/envelope-reveal.js"
+    },
+    "./wedding-journey": {
+      "development": "./src/components/wedding-journey/index.ts",
+      "types": "./dist/types/components/wedding-journey/index.d.ts",
+      "import": "./dist/wedding-journey.js",
+      "default": "./dist/wedding-journey.js"
+    },
+    "./wedding-journey.css": {
+      "development": "./src/components/wedding-journey/wedding-journey.css",
+      "import": "./src/components/wedding-journey/wedding-journey.css",
+      "default": "./src/components/wedding-journey/wedding-journey.css"
     }
   },
   "scripts": {

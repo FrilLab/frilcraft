@@ -13,6 +13,17 @@ export const componentCatalog: readonly ComponentCatalogEntry[] = [
     previewImage: "/previews/envelope-reveal.svg",
     load: async () => (await import("./entries/envelope-reveal.js")).componentDetail,
   },
+  {
+    id: "wedding-journey",
+    name: "Wedding Journey",
+    description: "Walk through an illustrated garden and open a real invitation when you meet the couple.",
+    category: "interaction",
+    tags: ["invitation", "animation"],
+    badges: ["React", "CSS", "SVG"],
+    installable: true,
+    previewImage: "/previews/wedding-journey.svg",
+    load: async () => (await import("./entries/wedding-journey.js")).componentDetail,
+  },
 ];
 
 export type { ComponentCategory, ComponentTag } from "./metadata.js";

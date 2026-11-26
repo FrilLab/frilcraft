@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 460" fill="none">
+  <defs>
+    <linearGradient id="veil" x1="360" y1="0" x2="360" y2="460" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#55473e" stop-opacity=".16"/>
+      <stop offset=".68" stop-color="#493b32" stop-opacity=".02"/>
+      <stop offset="1" stop-color="#47392f" stop-opacity=".46"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#fffaf0"/>
+      <stop offset="1" stop-color="#f0e4d1"/>
+    </linearGradient>
+  </defs>
+  <image href="/wedding-journey/garden-landscape.webp" width="720" height="460" preserveAspectRatio="xMidYMid slice"/>
+  <rect width="720" height="460" fill="url(#veil)"/>
+  <g opacity=".82" fill="#fff8e9">
+    <circle cx="87" cy="97" r="2"/><circle cx="162" cy="138" r="1.6"/><circle cx="610" cy="88" r="1.8"/>
+    <circle cx="552" cy="176" r="1.5"/><circle cx="230" cy="64" r="1.4"/><circle cx="657" cy="261" r="2"/>
+  </g>
+  <g transform="translate(494 77)">
+    <path d="M4 87V24C4 11 15 0 28 0h97c13 0 24 11 24 24v63" stroke="#f9eddb" stroke-width="3"/>
+    <path d="M11 85V25c0-9 8-17 17-17h95c9 0 17 8 17 17v60" stroke="#f9eddb" stroke-opacity=".52"/>
+    <path d="M1 87h153" stroke="#f9eddb" stroke-width="3" stroke-linecap="round"/>
+    <path d="M22 30c8-8 19-8 27 0-8 9-19 9-27 0Zm83-2c8-8 19-8 27 0-8 9-19 9-27 0Z" fill="#e8cbb2"/>
+  </g>
+  <g transform="translate(41 326) rotate(-4)">
+    <rect width="211" height="91" rx="2" fill="url(#paper)" fill-opacity=".95"/>
+    <path d="M17 17h44M17 23h26" stroke="#ad8c70" stroke-width="1" opacity=".62"/>
+    <text x="17" y="51" fill="#59483b" font-family="Georgia,serif" font-size="25" letter-spacing="1">Jisoo &amp; Minseo</text>
+    <text x="18" y="72" fill="#8f7765" font-family="Arial,sans-serif" font-size="9" letter-spacing="2">A GARDEN WEDDING</text>
+  </g>
+  <path d="M557 334c14-13 27-11 39 2m-30-13c12-15 26-15 40-2m-27-14c8-13 19-14 31-5" stroke="#fff5df" stroke-width="1.4" stroke-linecap="round" opacity=".8"/>
+  <rect x="1" y="1" width="718" height="458" rx="4" stroke="#fffaf2" stroke-opacity=".46" stroke-width="2"/>
+</svg>

@@ -60,10 +60,10 @@ describe("Playground", () => {
     view.unmount();
   });
 
-  it("lists Envelope Reveal and renders the package component in its preview", async () => {
+  it("registers both components and renders the Envelope Reveal package component in its preview", async () => {
     await renderDetail();
 
-    expect(componentCatalog.map(({ id }) => id)).toEqual(["envelope-reveal"]);
+    expect(componentCatalog.map(({ id }) => id)).toEqual(["envelope-reveal", "wedding-journey"]);
     expect(screen.getByRole("navigation", { name: "Breadcrumb" })).toHaveTextContent("All components");
     expect(screen.getByRole("heading", { name: "Try the preview" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Interaction" })).toHaveAttribute("href", "/?category=interaction");
@@ -78,7 +78,7 @@ describe("Playground", () => {
     const user = userEvent.setup();
     render(<App />);
 
-    expect(screen.getByRole("status")).toHaveTextContent("1 component");
+    expect(screen.getByRole("status")).toHaveTextContent("2 components");
     expect(screen.getByRole("button", { name: "Interaction" })).toHaveAttribute("aria-pressed", "false");
     expect(load).not.toHaveBeenCalled();
 
@@ -96,7 +96,7 @@ describe("Playground", () => {
     expect(load).not.toHaveBeenCalled();
 
     await user.clear(search);
-    const card = screen.getByRole("article");
+    const card = screen.getAllByRole("article").find((article) => within(article).queryByRole("link", { name: "Explore Envelope Reveal" }))!;
     await user.click(within(card).getByRole("button", { name: "Reveal" }));
     expect(window.location.search).toBe("?tag=reveal");
     expect(within(card).getByRole("button", { name: "Reveal" })).toHaveAttribute("aria-pressed", "true");
@@ -118,7 +118,7 @@ describe("Playground", () => {
     expect(screen.getByRole("heading", { name: "No components found" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Clear all filters" })).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Clear all filters" }));
-    expect(screen.getByRole("status")).toHaveTextContent("1 component");
+    expect(screen.getByRole("status")).toHaveTextContent("2 components");
     expect(window.location.search).toBe("");
   });
 

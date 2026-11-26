@@ -22,13 +22,18 @@ assert.doesNotMatch(javascript, /(?:from\s*|import\s*\()\s*["'](?:three(?:\.js)?
 assert.match(css, /perspective:\s*850px/, "Consumer Tailwind stylesheet should contain the component's perspective utility.");
 assert.match(css, /clip-path:\s*polygon/, "Consumer Tailwind stylesheet should contain the envelope geometry utilities.");
 assert.match(css, /prefers-reduced-motion/, "Consumer Tailwind stylesheet should preserve reduced-motion styling.");
+assert.match(css, /\.fc-wedding-journey(?:[\s{.:#[]|$)/, "Consumer should load Wedding Journey's exported CSS stylesheet.");
 
 const libraryJavaScript = await readFile(new URL("envelope-reveal.js", packageOutput), "utf8");
+const weddingJourneyJavaScript = await readFile(new URL("wedding-journey.js", packageOutput), "utf8");
 const declarationFile = new URL("types/components/envelope-reveal/EnvelopeReveal.d.ts", packageOutput);
 assert.match(libraryJavaScript, /from\s+["']react["']/, "Library output should use the React peer dependency.");
 assert.match(libraryJavaScript, /from\s+["']react\/jsx-runtime["']/, "JSX runtime should remain external to the library bundle.");
 assert.match(libraryJavaScript, /from\s+["']cn["']/, "Library output should use its declared cn runtime dependency.");
 assert.doesNotMatch(libraryJavaScript, /(?:from\s*|import\s*\()\s*["'](?:three(?:\.js)?|@react-three\/(?:fiber|drei))["']/i, "DOM library output must not import a 3D runtime.");
+assert.match(weddingJourneyJavaScript, /from\s+["']react["']/, "Wedding Journey library output should use the React peer dependency.");
+assert.doesNotMatch(weddingJourneyJavaScript, /(?:from\s*|import\s*\()\s*["'](?:three(?:\.js)?|@react-three\/(?:fiber|drei))["']/i, "Wedding Journey output must not import a 3D runtime.");
+assert.ok(await readdir(fileURLToPath(packageOutput)).then((names) => names.includes("wedding-journey.js")), "Package build should emit Wedding Journey's entry.");
 const declarations = await readFile(fileURLToPath(declarationFile), "utf8");
 const declarationBarrel = await readFile(new URL("types/components/envelope-reveal/index.d.ts", packageOutput), "utf8");
 assert.match(declarationBarrel, /EnvelopeRevealProps/, "Package export barrel must expose the component props type.");

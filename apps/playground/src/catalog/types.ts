@@ -19,6 +19,8 @@ export interface UsageCodeDefinition<Props extends { [Key in keyof Props]: Playg
   readonly defaultProps: Props;
   readonly controls: readonly PlaygroundControl<Props>[];
   readonly usageNote?: string;
+  readonly additionalImports?: readonly string[];
+  readonly additionalProps?: readonly { readonly name: string; readonly value: string }[];
 }
 
 export interface SourceFile {
@@ -32,6 +34,10 @@ export interface ComponentDetailDefinition<Props extends { [Key in keyof Props]:
   readonly workspaceCssImportPath?: string;
   readonly sourceImportPath: string;
   readonly sourceCssImportPath?: string;
+  readonly sourceUsageImports?: readonly string[];
+  readonly sourceUsageProps?: readonly { readonly name: string; readonly value: string }[];
+  readonly loadSourceFiles?: () => Promise<readonly SourceFile[]>;
+  readonly sourceFileCount?: number;
   readonly Preview: ComponentType<Props>;
   readonly defaultProps: Props;
   readonly controls: readonly PlaygroundControl<Props>[];
@@ -50,6 +56,8 @@ export interface ComponentDetailRegistration {
   readonly sourceInstructions: string;
   readonly render: (props: PlaygroundProps) => ReactNode;
   readonly generateUsageCode: (props: PlaygroundProps, target: "workspace" | "source") => string;
+  readonly loadSourceFiles?: () => Promise<readonly SourceFile[]>;
+  readonly sourceFileCount: number;
 }
 
 export interface ComponentCatalogEntry {

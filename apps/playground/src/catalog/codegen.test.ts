@@ -77,4 +77,20 @@ describe("createUsageCode", () => {
     expect(code).toContain('import { PosterCard } from "@example/poster-card";');
     expect(code).not.toContain(".css");
   });
+
+  it("supports local artwork modules in copied-source examples", () => {
+    const code = createUsageCode({
+      ...syntheticDefinition,
+      additionalImports: ['import { posterArtwork } from "./PosterArtwork";'],
+      additionalProps: [{ name: "artwork", value: "posterArtwork" }],
+    }, {
+      caption: "Default caption",
+      count: 0,
+      enabled: false,
+      optionalNote: undefined,
+    });
+
+    expect(code).toContain('import { posterArtwork } from "./PosterArtwork";');
+    expect(code).toContain("<PosterCard\n      artwork={posterArtwork}\n    />");
+  });
 });
